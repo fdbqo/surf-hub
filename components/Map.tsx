@@ -40,5 +40,7 @@ const Map = ({ location, name, description }: MapProps) => {
   )
 }
 
+// reworking map, this is currently unused
+
 export default Map
 
