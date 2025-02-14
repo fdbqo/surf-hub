@@ -46,3 +46,5 @@ export const forumTopics = [
   },
 ]
 
+// temporary mock data for the search system
+
