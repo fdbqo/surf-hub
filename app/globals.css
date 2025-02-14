@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 200 20% 98%;
+    --foreground: 200 50% 3%;
+    --card: 0 0% 100%;
+    --card-foreground: 200 50% 3%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 200 50% 3%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 200 98% 98%;
+    --secondary: 200 32% 90%;
+    --secondary-foreground: 200 50% 3%;
+    --muted: 200 32% 90%;
+    --muted-foreground: 200 50% 45%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 200 98% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 200 32% 88%;
+    --input: 200 32% 88%;
+    --ring: 199 89% 48%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 200 50% 3%;
+    --foreground: 200 20% 98%;
+    --card: 200 50% 3%;
+    --card-foreground: 200 20% 98%;
+    --popover: 200 50% 3%;
+    --popover-foreground: 200 20% 98%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 200 20% 98%;
+    --secondary: 200 50% 7%;
+    --secondary-foreground: 200 20% 98%;
+    --muted: 200 50% 7%;
+    --muted-foreground: 200 20% 65%;
+    --accent: 199 89% 48%;
+    --accent-foreground: 200 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 200 20% 98%;
+    --border: 200 50% 10%;
+    --input: 200 50% 7%;
+    --ring: 199 89% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.custom-icon-wrapper {
+  background: none;
+  border: none;
+}
+
+.custom-icon {
+  color: red;
+}
+
+.custom-icon svg {
+  fill: red;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.2));
+}
+
+.custom-icon svg path {
+  fill: currentColor;
+}
+
+.custom-icon svg circle {
+  fill: white;
+  stroke: white;
+}
+
