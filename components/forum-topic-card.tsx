@@ -1,7 +1,9 @@
+"use client"
+
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MessageSquare, User } from "lucide-react"
+import { MessageSquare, User, MapPin } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface ForumTopicCardProps {
@@ -12,9 +14,26 @@ interface ForumTopicCardProps {
   lastActivity: string
   tags: string[]
   preview?: string
+  linkedSpot?: {
+    id: string
+    name: string
+    difficulty: number
+    waveType: string
+    bestSeason: string
+    imageUrl?: string
+  }
 }
 
-export function ForumTopicCard({ id, title, author, replies, lastActivity, tags, preview }: ForumTopicCardProps) {
+export function ForumTopicCard({
+  id,
+  title,
+  author,
+  replies,
+  lastActivity,
+  tags,
+  preview,
+  linkedSpot,
+}: ForumTopicCardProps) {
   const formatLastActivity = (activity: string) => {
     const date = new Date(activity)
     const now = new Date()
@@ -46,7 +65,17 @@ export function ForumTopicCard({ id, title, author, replies, lastActivity, tags,
             <div className="space-y-2">
               <h2 className="text-xl font-semibold line-clamp-1">{title}</h2>
               {preview && <p className="text-sm text-muted-foreground line-clamp-1">{preview}</p>}
+
               <div className="flex flex-wrap gap-2">
+                {linkedSpot && (
+                  <Badge
+                    variant="outline"
+                    className="bg-primary/10 text-primary border-primary/20 flex items-center gap-1.5"
+                  >
+                    <MapPin className="h-3.5 w-3.5" />
+                    {linkedSpot.name}
+                  </Badge>
+                )}
                 {tags.map((tag) => (
                   <Badge key={tag} variant="secondary" className="bg-secondary">
                     {tag}

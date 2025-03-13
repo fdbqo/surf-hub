@@ -1,10 +1,16 @@
+/**
+ * nextauth authentication routes
+ * handles login, session management, and JWT operations
+ * - 03/13/2025
+ */
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import { compare } from "bcrypt"
+import { compare } from "bcryptjs"
 import { User } from "@/models/User"
 import { connectToDatabase, disconnectFromDatabase } from "@/lib/mongodb"
+import type { NextAuthOptions } from "next-auth"
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -17,9 +23,10 @@ export const authOptions = {
           throw new Error("Missing credentials")
         }
 
-        await connectToDatabase()
-
+        let connection
         try {
+          connection = await connectToDatabase()
+
           const user = await User.findOne({ email: credentials.email }).select("+password")
 
           if (!user) {
@@ -35,13 +42,13 @@ export const authOptions = {
           return {
             id: user._id.toString(),
             email: user.email,
-            name: user.name,
+            name: user.displayName || user.name,
             username: user.username,
-            role: user.role,
+            role: user.role || "user",
           }
         } catch (error) {
           console.error("Authentication error:", error)
-          throw new Error("Authentication failed")
+          throw error
         } finally {
           await disconnectFromDatabase()
         }
@@ -72,7 +79,13 @@ export const authOptions = {
   },
   pages: {
     signIn: "/login",
+    error: "/login",
   },
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  debug: process.env.NODE_ENV === "development",
   secret: process.env.NEXTAUTH_SECRET,
 }
 

@@ -1,3 +1,8 @@
+/**
+ * forum reply management API
+ * handles operations on specific forum replies
+ * - 03/13/2025
+ */
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { connectToDatabase, disconnectFromDatabase } from "@/lib/mongodb"

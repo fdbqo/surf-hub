@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { toast } from "@/components/ui/use-toast"
 import { LoadingSpinner } from "@/components/loading-spinner"
+import { LinkedSpotCard } from "@/components/linked-spot-card"
 
 interface ForumTopic {
   _id: string
@@ -38,6 +39,16 @@ interface ForumTopic {
   createdAt: string
   updatedAt: string
   tags: string[]
+  linkedSpot: {
+    _id: string
+    name: string
+    difficulty: string
+    waveType: string
+    bestSeason: string
+    imageUrl: string
+    averageWaveHeight: string
+    windDirection: string
+  } | null
 }
 
 interface ForumReply {
@@ -249,9 +260,24 @@ export default function ForumThreadPage() {
               ))}
             </div>
           </CardHeader>
-          <CardContent className="p-8">
+          <CardContent className="px-8 py-6">
             <p className="mb-6 text-lg">{topic.content}</p>
           </CardContent>
+          {topic.linkedSpot && (
+            <CardContent className="px-8 pb-8">
+              <h3 className="text-sm font-medium text-muted-foreground mb-2">Linked Surf Spot</h3>
+              <LinkedSpotCard
+                id={topic.linkedSpot._id}
+                name={topic.linkedSpot.name}
+                difficulty={topic.linkedSpot.difficulty}
+                waveType={topic.linkedSpot.waveType}
+                bestSeason={topic.linkedSpot.bestSeason}
+                imageUrl={topic.linkedSpot.imageUrl}
+                averageWaveHeight={topic.linkedSpot.averageWaveHeight}
+                windDirection={topic.linkedSpot.windDirection}
+              />
+            </CardContent>
+          )}
         </Card>
 
         <div className="flex justify-between items-center mb-6 mt-12">

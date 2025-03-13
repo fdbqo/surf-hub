@@ -1,3 +1,8 @@
+/**
+ * admin user detail API
+ * retrieves and updates specific user accounts
+ * - 03/13/2025
+ */
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { connectToDatabase, disconnectFromDatabase } from "@/lib/mongodb"

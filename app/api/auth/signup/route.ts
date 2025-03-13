@@ -1,5 +1,10 @@
+/**
+ * user registration API
+ * creates new user accounts with hashed passwords
+ * - 03/13/2025
+ */
 import { NextResponse } from "next/server"
-import { hash } from "bcrypt"
+import { hash } from "bcryptjs"
 import { User } from "@/models/User"
 import { connectToDatabase, disconnectFromDatabase } from "@/lib/mongodb"
 import { z } from "zod"

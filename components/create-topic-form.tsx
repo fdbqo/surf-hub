@@ -1,5 +1,6 @@
 "use client"
 
+import type React from "react"
 import { useState } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
@@ -11,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { X } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { SpotSelector, type SurfSpot } from "@/components/spot-selector"
 
 interface CreateTopicFormProps {
   onSuccess: () => void
@@ -22,6 +24,7 @@ export function CreateTopicForm({ onSuccess }: CreateTopicFormProps) {
   const [selectedTags, setSelectedTags] = useState<ForumTag[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [selectedSpot, setSelectedSpot] = useState<SurfSpot | null>(null)
   const { data: session } = useSession()
   const router = useRouter()
 
@@ -55,6 +58,7 @@ export function CreateTopicForm({ onSuccess }: CreateTopicFormProps) {
           content,
           author: session.user.id,
           tags: selectedTags,
+          linkedSpot: selectedSpot?._id, // Add the linked spot ID
         }),
       })
 
@@ -62,6 +66,7 @@ export function CreateTopicForm({ onSuccess }: CreateTopicFormProps) {
         setTitle("")
         setContent("")
         setSelectedTags([])
+        setSelectedSpot(null)
         router.refresh()
         onSuccess()
       } else {
@@ -84,16 +89,48 @@ export function CreateTopicForm({ onSuccess }: CreateTopicFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+    <form onSubmit={handleSubmit} className="space-y-6 mt-4">
       {error && (
         <Alert variant="destructive" className="mb-4">
           <AlertTitle>Error Creating Topic</AlertTitle>
           <AlertDescription className="whitespace-pre-wrap">{error}</AlertDescription>
         </Alert>
       )}
-      <Input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Topic title" required />
-      <Textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="Topic content" required />
+
       <div className="space-y-2">
+        <label htmlFor="title" className="text-sm font-medium">
+          Title <span className="text-destructive">*</span>
+        </label>
+        <Input
+          id="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="What's your topic about?"
+          required
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor="content" className="text-sm font-medium">
+          Content <span className="text-destructive">*</span>
+        </label>
+        <Textarea
+          id="content"
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Share your thoughts, questions, or experiences..."
+          className="min-h-[150px]"
+          required
+        />
+      </div>
+
+      {/* Modern Surf Spot Selector */}
+      <SpotSelector selectedSpot={selectedSpot} onSelectSpot={setSelectedSpot} />
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium">
+          Tags <span className="text-destructive">*</span>
+        </label>
         <Select onValueChange={(value: ForumTag) => handleAddTag(value)}>
           <SelectTrigger>
             <SelectValue placeholder="Select tags" />
@@ -106,7 +143,7 @@ export function CreateTopicForm({ onSuccess }: CreateTopicFormProps) {
             ))}
           </SelectContent>
         </Select>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mt-2">
           {selectedTags.map((tag) => (
             <Badge key={tag} variant="secondary">
               {tag}
@@ -117,7 +154,8 @@ export function CreateTopicForm({ onSuccess }: CreateTopicFormProps) {
           ))}
         </div>
       </div>
-      <Button type="submit" disabled={isLoading}>
+
+      <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
         {isLoading ? "Creating..." : "Create Topic"}
       </Button>
     </form>

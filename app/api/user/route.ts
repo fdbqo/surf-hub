@@ -1,3 +1,8 @@
+/**
+ * user profile API
+ * retrieves user data including profile information and related content
+ * - 03/13/2025
+ */
 import { NextResponse } from "next/server"
 import { connectToDatabase, disconnectFromDatabase } from "@/lib/mongodb"
 import { User } from "@/models/User"
@@ -36,8 +41,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Email or username is required" }, { status: 400 })
   }
 
+  let connection
   try {
-    await connectToDatabase()
+    connection = await connectToDatabase()
 
     const query = email ? { email } : { username }
     const user = await User.findOne(query)

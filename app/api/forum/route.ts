@@ -1,3 +1,8 @@
+/**
+ * forum topics API
+ * handles listing and creating forum topics
+ * - 03/13/2025
+ */
 import { NextResponse } from "next/server"
 import { connectToDatabase, disconnectFromDatabase } from "@/lib/mongodb"
 import { ForumTopic } from "@/models/ForumTopic"
@@ -5,6 +10,7 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "../auth/[...nextauth]/route"
 import { z } from "zod"
 import { rateLimit } from "@/lib/rate-limit"
+import mongoose from "mongoose"
 
 const limiter = rateLimit({
   interval: 60 * 1000, // 60 seconds
@@ -15,12 +21,14 @@ const querySchema = z.object({
   page: z.string().regex(/^\d+$/).transform(Number).default("1"),
   limit: z.string().regex(/^\d+$/).transform(Number).default("10"),
   search: z.string().optional(),
+  spot: z.string().optional(), // Add spot filter
 })
 
 const createTopicSchema = z.object({
   title: z.string().min(5).max(100),
   content: z.string().min(10).max(5000),
   tags: z.array(z.string()).min(1).max(5),
+  linkedSpot: z.string().optional(), // Add optional linked spot
 })
 
 export async function GET(request: Request) {
@@ -31,15 +39,22 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url)
-  const { page, limit, search } = querySchema.parse(Object.fromEntries(searchParams))
+  const { page, limit, search, spot } = querySchema.parse(Object.fromEntries(searchParams))
 
   try {
     await connectToDatabase()
 
     const skip = (page - 1) * limit
-    const query = search
-      ? { $or: [{ title: { $regex: search, $options: "i" } }, { tags: { $in: [new RegExp(search, "i")] } }] }
-      : {}
+    const query: any = {}
+
+    if (search) {
+      query.$or = [{ title: { $regex: search, $options: "i" } }, { tags: { $in: [new RegExp(search, "i")] } }]
+    }
+
+    // Add spot filter if provided
+    if (spot) {
+      query.linkedSpot = new mongoose.Types.ObjectId(spot)
+    }
 
     const [topics, total] = await Promise.all([
       ForumTopic.find(query)
@@ -47,6 +62,7 @@ export async function GET(request: Request) {
         .skip(skip)
         .limit(limit)
         .populate("author", "username displayName")
+        .populate("linkedSpot", "name difficulty waveType bestSeason imageUrl") // Populate linked spot
         .lean(),
       ForumTopic.countDocuments(query),
     ])
@@ -80,7 +96,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { title, content, tags } = createTopicSchema.parse(body)
+    const { title, content, tags, linkedSpot } = createTopicSchema.parse(body)
 
     await connectToDatabase()
 
@@ -89,6 +105,7 @@ export async function POST(request: Request) {
       content,
       author: session.user.id,
       tags,
+      linkedSpot: linkedSpot ? new mongoose.Types.ObjectId(linkedSpot) : undefined,
     })
 
     await newTopic.save()

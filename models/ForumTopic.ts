@@ -14,6 +14,14 @@ const ForumTopicSchema = new mongoose.Schema(
       },
     ],
     replies: [{ type: mongoose.Schema.Types.ObjectId, ref: "ForumReply" }],
+    // Add linked spot reference
+    linkedSpot: { type: mongoose.Schema.Types.ObjectId, ref: "SurfSpot" },
+    // Moderation fields
+    reportCount: { type: Number, default: 0 },
+    reportedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    isReviewed: { type: Boolean, default: false },
+    reviewedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    reviewedAt: { type: Date },
   },
   {
     timestamps: true,
@@ -22,6 +30,10 @@ const ForumTopicSchema = new mongoose.Schema(
 
 // Add index for tags to improve query performance
 ForumTopicSchema.index({ tags: 1 })
+ForumTopicSchema.index({ content: "text", title: "text" })
+ForumTopicSchema.index({ reportCount: 1 })
+ForumTopicSchema.index({ isReviewed: 1 })
+ForumTopicSchema.index({ linkedSpot: 1 }) // Add index for linkedSpot
 
 export const ForumTopic = mongoose.models.ForumTopic || mongoose.model("ForumTopic", ForumTopicSchema)
 

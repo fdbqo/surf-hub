@@ -1,3 +1,8 @@
+/**
+ * forum topic detail API
+ * retrieves, updates, and deletes specific forum topics
+ * - 03/13/2025
+ */
 import { NextResponse } from "next/server"
 import { connectToDatabase, disconnectFromDatabase } from "@/lib/mongodb"
 import { ForumTopic, ForumReply } from "@/models"
@@ -14,6 +19,10 @@ export async function GET(request: Request, { params }: { params: { id: string }
       .populate({
         path: "author",
         select: "username displayName",
+      })
+      .populate({
+        path: "linkedSpot",
+        select: "name difficulty waveType bestSeason imageUrl averageWaveHeight windDirection",
       })
       .lean()
 

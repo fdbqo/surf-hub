@@ -23,8 +23,11 @@ const SurfSpotSchema = new mongoose.Schema(
   },
 )
 
-// Create a 2dsphere index on the location field for geospatial queries
 SurfSpotSchema.index({ location: "2dsphere" })
+SurfSpotSchema.index({ name: 1 })
+SurfSpotSchema.index({ waveType: 1 })
+SurfSpotSchema.index({ bestSeason: 1 })
+SurfSpotSchema.index({ difficulty: 1 })
 
 export const SurfSpot = mongoose.models.SurfSpot || mongoose.model("SurfSpot", SurfSpotSchema)
 

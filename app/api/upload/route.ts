@@ -1,3 +1,8 @@
+/**
+ * file upload API
+ * handles image uploads to vercel blob storage
+ * - 03/13/2025
+ */
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "../auth/[...nextauth]/route"

@@ -182,6 +182,9 @@ export function Navbar() {
                         <DropdownMenuSubContent>
                           <DropdownMenuItem onClick={() => router.push("/admin/users")}>Manage Users</DropdownMenuItem>
                           <DropdownMenuItem onClick={() => router.push("/admin/spots")}>Manage Spots</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => router.push("/admin/moderation")}>
+                            Content Moderation
+                          </DropdownMenuItem>
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>
                     </DropdownMenuSub>

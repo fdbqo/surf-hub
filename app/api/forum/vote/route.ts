@@ -1,3 +1,8 @@
+/**
+ * forum voting API
+ * manages upvotes and downvotes on forum content
+ * - 03/13/2025
+ */
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { connectToDatabase, disconnectFromDatabase } from "@/lib/mongodb"
